@@ -24,16 +24,16 @@ class PhoneNumberDescriptor(object):
         >>> instance.phone_number = '+414204242'
     """
 
-    def __init__(self, field):
-        self.field = field
+    def __init__(self, field_name, model):
+        self.field_name = field_name
 
     def __get__(self, instance=None, owner=None):
         if instance is None:
             return self
-        return instance.__dict__[self.field.name]
+        return instance.__dict__[self.field_name]
 
     def __set__(self, instance, value):
-        instance.__dict__[self.field.name] = to_python(value)
+        instance.__dict__[self.field_name] = to_python(value)
 
 
 class PhoneNumberField(models.Field):
@@ -66,7 +66,7 @@ class PhoneNumberField(models.Field):
     def contribute_to_class(self, cls, name, *args, **kwargs):
         super(PhoneNumberField, self).contribute_to_class(cls, name, *args,
                                                           **kwargs)
-        setattr(cls, self.name, self.descriptor_class(self))
+        setattr(cls, self.name, self.descriptor_class(self.name, self))
 
     def formfield(self, **kwargs):
         defaults = {
